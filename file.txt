@@ -1,0 +1,114 @@
+import React, { Component } from 'react';
+import View from '@ckeditor/ckeditor5-ui/src/view';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
+import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
+import InputTextView from '@ckeditor/ckeditor5-ui/src/inputtext/inputtextview';
+import submitHandler from '@ckeditor/ckeditor5-ui/src/bindings/submithandler';
+import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
+import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
+import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
+import checkIcon from '@ckeditor/ckeditor5-core/theme/icons/check.svg';
+import cancelIcon from '@ckeditor/ckeditor5-core/theme/icons/cancel.svg';
+
+class EditPopup extends Component {
+    constructor(props) {
+        super(props);
+
+        this.keystrokes = new KeystrokeHandler();
+        this.focusTracker = new FocusTracker();
+        this._focusables = new ViewCollection();
+        this._focusCycler = new FocusCycler({
+            focusables: this._focusables,
+            focusTracker: this.focusTracker,
+            keystrokeHandler: this.keystrokes,
+            actions: {
+                focusPrevious: 'shift + tab',
+                focusNext: 'tab'
+            }
+        });
+
+        this.tbName = new InputTextView(this.props.locale);
+        this.tbName.placeholder = this.props.locale.t('Bookmark Name');
+        this.saveButtonView = this._createButton(this.props.locale.t('Save'), checkIcon, 'ck-bookmark-edit-btnSave');
+        this.saveButtonView.type = this.props.locale.t('submit');
+        this.cancelButtonView = this._createButton(this.props.locale.t('Cancel'), cancelIcon, 'ck-bookmark-edit-btnCancel', 'cancel');
+
+        this.tbName.extendTemplate({
+            attributes: {
+                class: ['ck-bookmark-edit-tbName']
+            }
+        });
+
+        this.setTemplate({
+            tag: 'form',
+
+            attributes: {
+                class: ['ck-bookmark-edit'],
+                tabIndex: '-1'
+            },
+
+            children: [
+                this.tbName,
+                this.saveButtonView,
+                this.cancelButtonView
+            ]
+        });
+    }
+
+    componentDidMount() {
+        super.componentDidMount();
+
+        submitHandler({
+            view: this
+        });
+
+        const childViews = [
+            this.tbName,
+            this.saveButtonView,
+            this.cancelButtonView
+        ];
+
+        childViews.forEach(v => {
+            this._focusables.add(v);
+            this.focusTracker.add(v.element);
+        });
+
+        this.keystrokes.listenTo(this.element);
+    }
+
+    _createButton(label, icon, className, eventName) {
+        const button = new ButtonView(this.props.locale);
+
+        button.set({
+            label,
+            icon,
+            tooltip: true
+        });
+
+        button.extendTemplate({
+            attributes: {
+                class: [
+                    className
+                ]
+            }
+        });
+
+        if (eventName) {
+            button.delegate('execute').to(this, eventName);
+        }
+
+        return button;
+    }
+
+    render() {
+        return (
+            <form className="ck-bookmark-edit" tabIndex="-1">
+                {this.tbName}
+                {this.saveButtonView}
+                {this.cancelButtonView}
+            </form>
+        );
+    }
+}
+
+export default EditPopup;
