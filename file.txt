@@ -196,3 +196,134 @@ class ViewPopup extends Component {
 
 export default ViewPopup;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React from 'react';
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
+import ClickObserver from '@ckeditor/ckeditor5-engine/src/view/observer/clickobserver';
+import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
+import clickOutsideHandler from '@ckeditor/ckeditor5-ui/src/bindings/clickoutsidehandler';
+import ViewPopup from './ui/viewpopup';
+import EditPopup from './ui/editpopup';
+import bookmarkIcon from '../theme/icons/bookmark.svg';
+
+class BookmarkUI extends Plugin {
+    componentDidMount() {
+        const editor = this.props.editor;
+        const t = editor.t;
+
+        editor.ui.componentFactory.add('bookmark', locale => {
+            const btn = new ButtonView(locale);
+            btn.set({
+                label: t('Bookmark'),
+                withText: false,
+                tooltip: true,
+                icon: bookmarkIcon
+            });
+
+            const bookmarkCommand = editor.commands.get('insertBookmark');
+            btn.bind('isEnabled').to(bookmarkCommand, 'isEnabled');
+            btn.bind('isOn').to(bookmarkCommand, 'isBookmark');
+
+            this.listenTo(btn, 'execute', () => {
+                editor.execute('insertBookmark');
+                this._showUI();
+            });
+
+            return btn;
+        });
+
+        this._balloon = editor.plugins.get(ContextualBalloon);
+
+        this._editPopup = this._createEditPopup();
+        this._viewPopup = this._createViewPopup();
+
+        editor.editing.view.addObserver(ClickObserver);
+        this._enableUserBalloonInteractions();
+    }
+
+    _createEditPopup() {
+        const editor = this.props.editor;
+        const editPopup = new EditPopup(editor.locale);
+
+        const command = editor.commands.get('insertBookmark');
+        editPopup.tbName.bind('value').to(command, 'value');
+
+        editPopup.keystrokes.set('Esc', (data, cancel) => {
+            this._hideUI();
+            cancel();
+        });
+
+        this.listenTo(editPopup, 'submit', () => {
+            const bookmarkName = editPopup.tbName.element.value;
+            editor.execute('insertBookmark', bookmarkName);
+            this._hideUI();
+        });
+
+        this.listenTo(editPopup, 'cancel', () => {
+            this._hideUI();
+        });
+
+        return editPopup;
+    }
+
+    _createViewPopup() {
+        const editor = this.props.editor;
+        const viewPopup = new ViewPopup(editor.locale);
+
+        const command = editor.commands.get('insertBookmark');
+        viewPopup.lblName.bind('text').to(command, 'value');
+
+        this.listenTo(viewPopup, 'edit', () => {
+            this._balloon.remove(this._viewPopup);
+            this._balloon.add({
+                view: this._editPopup,
+                position: this._getBalloonPositionData()
+            });
+
+            this._editPopup.tbName.select();
+        });
+
+        this.listenTo(viewPopup, 'delete', () => {
+            this.editor.execute('deleteBookmark');
+            this._hideUI();
+        });
+
+        viewPopup.keystrokes.set('Esc', (data, cancel) => {
+            this._hideUI();
+            cancel();
+        });
+
+        return viewPopup;
+    }
+
+    _enableUserBalloonInteractions() {
+        const viewDocument = this.props.editor.editing.view.document;
+
+        this.listenTo(viewDocument, 'click', () => {
+            const elmBookmark = this._getSelectedBookmarkElement();
+            if (elmBookmark) {
+                this._showUI();
+            }
+        });
+
+        clickOutsideHandler({
+            emitter: this._editPopup,
+            activator: () => this._balloon.visible
+
