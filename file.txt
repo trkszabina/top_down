@@ -112,3 +112,87 @@ class EditPopup extends Component {
 }
 
 export default EditPopup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import React, { Component } from 'react';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
+import LabelView from '@ckeditor/ckeditor5-ui/src/label/labelview';
+import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
+
+import pencilIcon from '@ckeditor/ckeditor5-core/theme/icons/pencil.svg';
+import deleteIcon from '../../theme/icons/delete.svg';
+
+class ViewPopup extends Component {
+    constructor(props) {
+        super(props);
+
+        this.keystrokes = new KeystrokeHandler();
+
+        this.lblName = new LabelView(this.props.locale);
+        this.editButtonView = this._createButton(this.props.locale.t('Edit'), pencilIcon, 'ck-bookmark-view-btnEdit', 'edit');
+        this.deleteButtonView = this._createButton(this.props.locale.t('Delete'), deleteIcon, 'ck-bookmark-view-btnDelete', 'delete');
+
+        this.lblName.extendTemplate({
+            attributes: {
+                class: ['ck-bookmark-view-lblName']
+            }
+        });
+    }
+
+    componentDidMount() {
+        this.keystrokes.listenTo(this.element);
+    }
+
+    _createButton(label, icon, className, eventName) {
+        const button = new ButtonView(this.props.locale);
+
+        button.set({
+            label,
+            icon,
+            tooltip: true
+        });
+
+        button.extendTemplate({
+            attributes: {
+                class: [className]
+            }
+        });
+
+        button.delegate('execute').to(this, eventName);
+
+        return button;
+    }
+
+    render() {
+        return (
+            <div className="ck-bookmark-view">
+                {this.lblName.render()}
+                {this.editButtonView.render()}
+                {this.deleteButtonView.render()}
+            </div>
+        );
+    }
+}
+
+export default ViewPopup;
+
