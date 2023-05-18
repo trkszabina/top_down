@@ -1,3 +1,78 @@
+const { sp } = require("@pnp/nodejs");
+const path = require("path");
+const fs = require('fs');
+const Docxtemplater = require('docxtemplater');
+
+const siteUrl = "https://your-sharepoint-site-url";
+const clientId = "your-client-id";
+const clientSecret = "your-client-secret";
+
+const credentials = {
+    clientId: clientId,
+    clientSecret: clientSecret,
+    tenantId: "your-tenant-id",
+};
+
+sp.setup({
+    sp: {
+        baseUrl: siteUrl,
+        authentication: {
+            type: "aadAppCredentials",
+            creds: credentials,
+        },
+        headers: {
+            "User-Agent": "My App",
+        },
+        options: {
+            nodeClientOptions: {
+                // Provide the path to the SSL certificate (PEM file) if needed
+                agentOptions: {
+                    ca: null,
+                },
+            },
+        },
+    },
+});
+
+const libraryName = "Documents";
+const queryParameters = {
+    Top: 10,  // Number of documents to fetch (e.g., 10)
+    OrderBy: "Created desc"  // Sort documents by creation date in descending order
+};
+
+(async () => {
+    try {
+        const documents = await sp.web.lists.getByTitle(libraryName).items.select("FileLeafRef", "FileRef").top(queryParameters.Top).orderBy(queryParameters.OrderBy).get();
+
+        const mergedDoc = new Docxtemplater();
+
+        // Iterate through the documents
+        for (const document of documents) {
+            const content = fs.readFileSync(document.FileRef, 'binary');
+            mergedDoc.load(content);
+
+            // Add a page break between merged documents
+            const pageBreak = new Docxtemplater().load('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+            mergedDoc.resolveData(pageBreak.getFullText());
+        }
+
+        const mergedContent = mergedDoc.getZip().generate({ type: 'nodebuffer' });
+
+        // Save the merged document
+        const mergedFileName = 'merged_document.docx';
+        fs.writeFileSync(mergedFileName, mergedContent);
+
+        console.log('Merged document saved successfully:', mergedFileName);
+    } catch (error) {
+        console.log("Error:", error);
+    }
+})();
+
+
+
+
+
+
 import React, { Component } from 'react';
 import View from '@ckeditor/ckeditor5-ui/src/view';
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
