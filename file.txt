@@ -3,6 +3,60 @@ require("@pnp/sp/webs");
 require("@pnp/sp/lists");
 require("@pnp/sp/files");
 const fs = require('fs');
+const officegen = require('officegen');
+
+const siteUrl = "https://your-sharepoint-site-url";
+const username = "your-sharepoint-username";
+const password = "your-sharepoint-password";
+
+sp.setup({
+    sp: {
+        baseUrl: siteUrl,
+        fetchClientFactory: () => new sp.FetchClientFactory(siteUrl, username, password),
+    },
+});
+
+const libraryName = "Documents";
+const queryParameters = {
+    Top: 10,  // Number of documents to fetch (e.g., 10)
+    OrderBy: "Created desc"  // Sort documents by creation date in descending order
+};
+
+(async () => {
+    try {
+        const documents = await sp.web.lists.getByTitle(libraryName).items.select("FileLeafRef", "FileRef").top(queryParameters.Top).orderBy(queryParameters.OrderBy).get();
+
+        const mergedDoc = officegen('docx');
+
+        // Iterate through the documents
+        for (const document of documents) {
+            const fileUrl = `${siteUrl}/${document.FileRef}`;
+            const fileContent = await sp.web.getFileByServerRelativeUrl(fileUrl).getBuffer();
+
+            const newDoc = officegen('docx');
+            newDoc.load(fileContent);
+            mergedDoc.append(newDoc);
+        }
+
+        const outputStream = fs.createWriteStream('merged_document.docx');
+        mergedDoc.generate(outputStream);
+        outputStream.on('finish', function () {
+            console.log('Merged document saved successfully');
+        });
+
+    } catch (error) {
+        console.log("Error:", error);
+    }
+})();
+
+
+
+
+const { sp } = require("@pnp/sp");
+require("@pnp/sp/webs");
+require("@pnp/sp/lists");
+require("@pnp/sp/files");
+const fs = require('fs');
 const Docxtemplater = require('docxtemplater');
 
 const siteUrl = "https://your-sharepoint-site-url";
