@@ -1,3 +1,69 @@
+const { sp } = require("@pnp/sp");
+require("@pnp/sp/webs");
+require("@pnp/sp/lists");
+require("@pnp/sp/files");
+const fs = require('fs');
+const Docxtemplater = require('docxtemplater');
+
+const siteUrl = "https://your-sharepoint-site-url";
+const username = process.env.SHAREPOINT_USERNAME;
+const password = process.env.SHAREPOINT_PASSWORD;
+
+sp.setup({
+    sp: {
+        baseUrl: siteUrl,
+        fetchClientFactory: () => new sp.FetchClientFactory(siteUrl, username, password),
+    },
+});
+
+const libraryName = "Documents";
+const queryParameters = {
+    Top: 10,  // Number of documents to fetch (e.g., 10)
+    OrderBy: "Created desc"  // Sort documents by creation date in descending order
+};
+
+(async () => {
+    try {
+        const documents = await sp.web.lists.getByTitle(libraryName).items.select("FileLeafRef", "FileRef").top(queryParameters.Top).orderBy(queryParameters.OrderBy).get();
+
+        const mergedDoc = new Docxtemplater();
+
+        // Iterate through the documents
+        for (const document of documents) {
+            const fileUrl = `${siteUrl}/${document.FileRef}`;
+            const fileContent = await sp.web.getFileByServerRelativeUrl(fileUrl).getBuffer();
+
+            mergedDoc.load(fileContent);
+
+            // Add a page break between merged documents
+            const pageBreak = new Docxtemplater().load('<w:p><w:r><w:br w:type="page"/></w:r></w:p>');
+            mergedDoc.resolveData(pageBreak.getFullText());
+        }
+
+        const mergedContent = mergedDoc.getZip().generate({ type: 'nodebuffer' });
+
+        // Save the merged document
+        const mergedFileName = 'merged_document.docx';
+        fs.writeFileSync(mergedFileName, mergedContent);
+
+        console.log('Merged document saved successfully:', mergedFileName);
+    } catch (error) {
+        console.log("Error:", error);
+    }
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
 const { sp } = require("@pnp/nodejs");
 const path = require("path");
 const fs = require('fs');
