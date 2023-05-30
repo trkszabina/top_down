@@ -1,6 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Embedding Word Document from SharePoint</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/Office.js"></script>
+</head>
+<body>
+  <div id="word-container"></div>
+
+  <script>
+    Office.initialize = function () {
+      Word.run(function (context) {
+        var doc = context.document;
+        var contentControl = doc.body.insertContentControl();
+        contentControl.insertFileFromSharePoint("<SharePoint document URL>");
+
+        return context.sync();
+      }).catch(function (error) {
+        console.error(error);
+      });
+    };
+  </script>
+</body>
+</html>
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
   <title>Embedding Word Document</title>
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/Office.js"></script>
 </head>
