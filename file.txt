@@ -1,3 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Word Editor Example</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js" type="text/javascript"></script>
+</head>
+<body>
+    <div id="word-editor-container"></div>
+
+    <script type="text/javascript">
+        Office.initialize = function () {
+            createWordEditor();
+        };
+
+        function createWordEditor() {
+            Word.run(function (context) {
+                var doc = context.application.createDocument();
+                doc.open();
+                doc.setContainer('#word-editor-container');
+                doc.close();
+
+                return context.sync();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
 const { sp } = require("@pnp/sp");
 require("@pnp/sp/webs");
 require("@pnp/sp/lists");
