@@ -3,16 +3,19 @@
   <head>
     <title>Auto-Reload Example</title>
     <script>
-      var intervalId; // Variable to store the interval ID
+     var intervalId; // Variable to store the interval ID
 
       function startReload() {
-        intervalId = setInterval(function() {
-          location.reload();
-        }, 5000);
+        if (!intervalId) { // Check if intervalId is not set
+          intervalId = setInterval(function() {
+            location.reload();
+          }, 5000);
+        }
       }
 
       function stopReload() {
         clearInterval(intervalId);
+        intervalId = null; // Reset intervalId
       }
     </script>
   </head>
