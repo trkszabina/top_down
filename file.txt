@@ -1,5 +1,40 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Auto-Reload Example</title>
+    <script>
+      var intervalId; // Variable to store the interval ID
+
+      function startReload() {
+        intervalId = setInterval(function() {
+          location.reload();
+        }, 5000);
+      }
+
+      function stopReload() {
+        clearInterval(intervalId);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Auto-Reload Example</h1>
+    <p>The page will automatically reload every 5 seconds.</p>
+
+    <button onclick="startReload()">Start Reloading</button>
+    <button onclick="stopReload()">Stop Reloading</button>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
 <head>
   <title>Embedding Word Document from SharePoint</title>
   <script src="https://appsforoffice.microsoft.com/lib/1/hosted/Office.js"></script>
