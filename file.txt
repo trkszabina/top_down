@@ -46,6 +46,54 @@ find_replace_protected(file_path, find_str, replace_str, password)
 
 
 
+import win32com.client as win32
+from docx import Document
+
+def find_replace_protected(file_path, find_str, replace_str, password):
+    try:
+        # Open Word application using pywin32
+        word = win32.Dispatch("Word.Application")
+        word.Visible = False
+
+        # Open the protected document with pywin32 using the password
+        doc = word.Documents.Open(FileName=file_path, PasswordDocument=password)
+
+        # Remove protection
+        doc.Unprotect(password)
+
+        # Perform find and replace
+        for paragraph in doc.Paragraphs:
+            if find_str in paragraph.Range.Text:
+                paragraph.Range.Text = paragraph.Range.Text.replace(find_str, replace_str)
+
+        # Protect the document again using the password and "No changes" restriction
+        doc.Protect(Type=2, NoReset=1, Password=password)
+
+        # Save the modified document
+        doc.Save()
+
+        # Close the document and quit Word application
+        doc.Close()
+        word.Quit()
+
+        print("Find and replace completed successfully!")
+
+    except Exception as e:
+        print("An error occurred:", str(e))
+
+# Example usage
+file_path = r'C:\Users\szabi\test.docx'
+find_str = 'change'
+replace_str = 'apple'
+password = '1'
+find_replace_protected(file_path, find_str, replace_str, password)
+
+
+
+
+
+
+
 
 
 
