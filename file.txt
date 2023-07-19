@@ -22,6 +22,62 @@ def find_replace_protected(file_path, find_str, replace_str, password):
         temp_doc = Document(temp_file_path)
 
         # Get all the paragraphs with "No changes" protection
+        protected_paragraphs = [p for p in temp_doc.paragraphs if p._element._element.get('rsidRPr') is not None]
+
+        # Perform find and replace in the protected paragraphs
+        for paragraph in protected_paragraphs:
+            try:
+                if find_str in paragraph.text:
+                    paragraph.text = paragraph.text.replace(find_str, replace_str)
+            except Exception as e:
+                print(f"An error occurred while processing paragraph: {str(e)}")
+
+        # Save the modified document
+        temp_doc.save(temp_file_path)
+
+        # Replace the original document with the updated one
+        shutil.move(temp_file_path, file_path)
+
+        print("Find and replace completed successfully!")
+
+    except Exception as e:
+        print("An error occurred:", str(e))
+
+# Example usage
+file_path = r'C:\Users\szabi\test_document.docx'
+find_str = 'protected'
+replace_str = 'changed'
+password = 'apple'
+find_replace_protected(file_path, find_str, replace_str, password)
+
+
+
+
+
+import win32com.client as win32
+from docx import Document
+import shutil
+
+def find_replace_protected(file_path, find_str, replace_str, password):
+    try:
+        # Open Word application using pywin32
+        word = win32.Dispatch("Word.Application")
+        word.Visible = False
+
+        # Open the protected document with pywin32 using the password
+        doc = word.Documents.Open(FileName=file_path, PasswordDocument=password)
+
+        # Save a copy of the original document with the same protection settings
+        temp_file_path = file_path.replace('.docx', '_temp.docx')
+        shutil.copyfile(file_path, temp_file_path)
+
+        # Close the original document
+        doc.Close()
+
+        # Open the temporary copy of the document with docx library
+        temp_doc = Document(temp_file_path)
+
+        # Get all the paragraphs with "No changes" protection
         protected_paragraphs = [p for p in temp_doc.paragraphs if p._element._p.rPr is not None]
 
         # Perform find and replace in the protected paragraphs
