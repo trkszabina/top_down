@@ -1,3 +1,66 @@
+from lxml import etree
+from docx import Document
+from docx.opc.constants import RELATIONSHIP_TYPE as RT
+from docx.opc import part
+
+def read_dotx_xml(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        xml_content = file.read()
+
+    return etree.XML(xml_content)
+
+def modify_template_content(xml_root, new_content):
+    nsmap = xml_root.nsmap
+    word_namespace = nsmap[None]
+
+    for paragraph in xml_root.findall('.//w:p', namespaces=nsmap):
+        para_id = paragraph.get(f'{{{word_namespace}}}paraid')
+        text_id = paragraph.get(f'{{{word_namespace}}}textid')
+
+        if para_id == "0428BC03" and text_id == "562F96C2":
+            for text_element in paragraph.findall('.//w:t', namespaces=nsmap):
+                if text_element.get(f'{{{word_namespace}}}id') == "009F7F80":
+                    text_element.text = "This header has been changed"
+
+# Replace 'template.dotx' with the path to your .dotx file
+xml_root = read_dotx_xml('template.dotx')
+
+# Modify the content with the specified IDs
+modify_template_content(xml_root, new_content={
+    "0428BC03": "This header has been changed",
+    # Add more ID mappings as needed
+})
+
+# Save the modified XML back to the .dotx file
+def save_dotx_xml(file_path, xml_root):
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(etree.tostring(xml_root, pretty_print=True, encoding='unicode'))
+
+# Save the modified XML back to the .dotx file
+save_dotx_xml('modified_template.dotx', xml_root)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import win32com.client as win32
 from docx import Document
 import shutil
