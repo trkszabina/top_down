@@ -1,4 +1,100 @@
 import win32com.client as win32
+from docx import Document
+import shutil
+
+def copy_paragraph_style(source_paragraph, target_paragraph):
+    target_paragraph.style = source_paragraph.style
+    target_paragraph.alignment = source_paragraph.alignment
+    for source_run, target_run in zip(source_paragraph.runs, target_paragraph.runs):
+        target_run.bold = source_run.bold
+        target_run.italic = source_run.italic
+        target_run.underline = source_run.underline
+        target_run.font.size = source_run.font.size
+        target_run.font.name = source_run.font.name
+        target_run.font.color.rgb = source_run.font.color.rgb
+
+def find_replace_protected(file_path, find_str, replace_str, password):
+    try:
+        # Open Word application using pywin32
+        word = win32.Dispatch("Word.Application")
+        word.Visible = False
+
+        # Open the protected document with pywin32 using the password
+        doc = word.Documents.Open(FileName=file_path, PasswordDocument=password)
+
+        # Save a copy of the original document with the same protection settings
+        temp_file_path = file_path.replace('.docx', '_temp.docx')
+        shutil.copyfile(file_path, temp_file_path)
+
+        # Close the original document
+        doc.Close()
+
+        # Open the temporary copy of the document with docx library
+        temp_doc = Document(temp_file_path)
+
+        # Perform find and replace in all paragraphs
+        for paragraph in temp_doc.paragraphs:
+            try:
+                if find_str in paragraph.text:
+                    # Create a new paragraph with the same text as the original
+                    new_paragraph = temp_doc.add_paragraph(paragraph.text)
+
+                    # Copy the style of the original paragraph to the new one
+                    copy_paragraph_style(paragraph, new_paragraph)
+
+                    # Replace the text in the new paragraph
+                    new_paragraph.text = new_paragraph.text.replace(find_str, replace_str)
+
+                    # Remove the original paragraph
+                    p_element = paragraph._element
+                    p_element.getparent().remove(p_element)
+
+            except Exception as e:
+                print(f"An error occurred while processing paragraph: {str(e)}")
+
+        # Save the modified document
+        temp_doc.save(temp_file_path)
+
+        # Replace the original document with the updated one
+        shutil.move(temp_file_path, file_path)
+
+        print("Find and replace completed successfully!")
+
+    except Exception as e:
+        print("An error occurred:", str(e))
+
+# Example usage
+file_path = r'C:\Users\szabi\test_document.docx'
+find_str = 'Header'
+replace_str = 'The header has been changed'
+password = 'apple'
+find_replace_protected(file_path, find_str, replace_str, password)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import win32com.client as win32
 
 def find_replace_protected(file_path, find_str, replace_str, password):
     try:
