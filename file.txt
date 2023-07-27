@@ -1,3 +1,66 @@
+import os
+import win32com.client as win32
+
+def search_and_set_bookmark(doc_path, search_text, bookmark_name):
+    # Create an instance of the Word application
+    word_app = win32.Dispatch('Word.Application')
+
+    try:
+        # Open the Word document
+        doc = word_app.Documents.Open(doc_path)
+        found_text = False
+
+        # Loop through all the paragraphs in the document
+        for para in doc.Paragraphs:
+            if search_text in para.Range.Text:
+                found_text = True
+                para.Range.Bookmarks.Add(bookmark_name)
+                break
+
+        if found_text:
+            print(f"Bookmark '{bookmark_name}' set for the text: '{search_text}'")
+        else:
+            print(f"Text '{search_text}' not found in the document")
+
+        # Save and close the document
+        doc.Save()
+        doc.Close()
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        # Quit Word application
+        word_app.Quit()
+
+def main():
+    # Replace 'your_file.docx' with the path to your Word document
+    doc_path = r'C:\Users\szabi\bookmark.docx'
+    search_text = "Also here"  # Replace this with the text you want to find
+    bookmark_name = "MyBookmark2"       # Replace this with the desired bookmark name
+
+    if os.path.exists(doc_path):
+        search_and_set_bookmark(doc_path, search_text, bookmark_name)
+    else:
+        print("The specified file does not exist.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import docx
 
 def search_and_set_bookmark(doc, search_text, bookmark_name):
