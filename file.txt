@@ -1,3 +1,50 @@
+import docx
+
+def search_and_set_bookmark(doc, search_text, bookmark_name):
+    found_text = False
+    for paragraph in doc.paragraphs:
+        if search_text in paragraph.text:
+            found_text = True
+            bookmark_range = paragraph.runs[0].add_bookmark(bookmark_name)
+            break
+
+    return found_text
+
+def main():
+    # Replace 'your_file.docx' with the path to your Word document
+    docx_path = 'your_file.docx'
+    search_text = "YOUR_SPECIFIC_TEXT"  # Replace this with the text you want to find
+    bookmark_name = "MyBookmark"       # Replace this with the desired bookmark name
+
+    doc = docx.Document(docx_path)
+    found = search_and_set_bookmark(doc, search_text, bookmark_name)
+
+    if found:
+        print(f"Bookmark '{bookmark_name}' set for the text: '{search_text}'")
+    else:
+        print(f"Text '{search_text}' not found in the document")
+
+    # Save the document with the bookmarks
+    doc.save(docx_path)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import win32com.client as win32
 from docx import Document
 import shutil
