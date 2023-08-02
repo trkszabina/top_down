@@ -1,3 +1,57 @@
+import docx
+
+def read_all_tables(docx_file_path):
+    doc = docx.Document(docx_file_path)
+    all_tables = doc.tables
+    return all_tables
+
+def read_table_data(table):
+    table_data = []
+    for row in table.rows:
+        row_data = [cell.text.strip() for cell in row.cells]
+        table_data.append(row_data)
+    return table_data
+
+def save_data_to_docx(data, output_file_path):
+    doc = docx.Document()
+
+    for table_data in data:
+        table = doc.add_table(rows=len(table_data), cols=len(table_data[0]))
+
+        for i, row_data in enumerate(table_data):
+            for j, cell_value in enumerate(row_data):
+                table.cell(i, j).text = cell_value
+
+    doc.save(output_file_path)
+
+# Example usage
+if __name__ == "__main__":
+    input_file_path = r'C:\Users\szabi\test.docx'
+    output_file_path = r'C:\Users\szabi\test12.docx'
+
+    extracted_tables = read_all_tables(input_file_path)
+
+    if extracted_tables:
+        table_data_list = []
+        for table in extracted_tables:
+            table_data = read_table_data(table)
+            table_data_list.append(table_data)
+
+        save_data_to_docx(table_data_list, output_file_path)
+        print("Data extracted and saved to a new Word document.")
+    else:
+        print("No tables found in the input document.")
+
+
+
+
+
+
+
+
+
+
+
 import os
 import win32com.client as win32
 
