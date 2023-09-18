@@ -1,3 +1,106 @@
+action
+--> used to typeset various mathematical symbols and notations associated with actions and operations in algebra, group theory, and related fields of mathematics.
+
+ams
+--> provides support for many features defined by the American Mathematical Society (AMS) in their LaTeX packages
+--> features included: amsmath, amssymbols, amstheorems, amsfonts, amsdelimiters, amsoperators, amsrelations, amsaccents, amsalphabets
+
+amscd
+--> is used for creating commutative diagrams in LaTeX documents
+--> primary purpose of the amscd package is to provide an environment for creating commutative diagrams. It offers commands for specifying nodes, arrows, and labels within the diagram
+
+base
+--> base LaTeX package refers to the core set of files and functionalities that make up the LaTeX typesetting system
+--> these files are essential for running LaTeX and include the core document classes, font packages, basic formatting commands, and other essential components
+
+bbox 
+--> it is not a specific package or command
+--> it is a term used to refer to the bounding box of an element in a web page
+--> the bounding box is a rectangular box that encloses a rendered mathematical expression or any other HTML element
+(For example, when MathJax renders a mathematical expression, it calculates the dimensions of the bounding box that surrounds the expression. This information is used to position the expression correctly on the web page)
+
+braket
+-->provides support for typesetting various types of brackets commonly used in quantum mechanics and linear algebra
+--> these brackets include angle brackets, square brackets, curly brackets, and more
+--> the braket extension is separate from the LaTeX package of the same name and serves a similar purpose
+
+boldsymbol
+--> used to make symbols and characters within mathematical expressions appear in bold
+
+bussproofs
+--> provides a set of macros for typesetting proof trees in formal logic
+--> it is useful for creating structured and well-formatted proof trees in various branches of logic, including propositional logic and predicate logic
+
+cancel
+--> provides a range of methods for placing diagonal lines through mathematical expressions to indicate that they have been canceled out, crossed out, or marked for deletion
+--> this is commonly used in mathematics, physics, and engineering to show simplifications or cancellations in equations
+
+cases
+--> provides an environment for typesetting cases or conditions within a mathematical expression
+--> this is especially useful for defining piecewise functions or expressing mathematical definitions that are defined conditionally
+
+centernot
+--> used to typeset a negation symbol with an adjustable horizontal placement, so that it appears centered over the symbol it negates. This is particularly useful for indicating that a certain condition or property does not hold
+
+color
+--> provides support for adding color to documents
+--> it allows you to specify colors using various color models (RGB, CMYK, and others) and apply colors to text, backgrounds, borders, and other elements within your LaTeX document
+
+colortbl
+--> extends the capabilities of the standard tabular and array environments by adding support for coloring individual cells, rows, columns, and rules (lines) in tables
+--> it provides a simple way to add color to tables, which can be particularly useful for emphasizing specific data or improving the visual appeal of tables in documents
+
+empheq
+--> provides additional features and environments for easily creating and customizing equations with emphasis on specific parts
+--> the package is particularly useful for highlighting or boxing parts of equations to draw attention to them
+
+enclose
+--> provides commands for creating various styles of frames or enclosures around mathematical expressions or text
+--> this can be useful for emphasizing or drawing attention to specific parts of a document
+
+extpfeil
+--> provides additional arrow styles and customization options for extensible arrows
+--> it extends the functionality of the standard amsmath package, allowing for more versatile and customizable arrows in mathematical expressions
+
+gensymb
+--> provides a convenient way to access a variety of common symbols and units, particularly those used in scientific and technical writing
+
+html
+--> is used to generate HTML code from a LaTeX document
+--> this can be useful if you want to convert your LaTeX document into a webpage
+
+mathtools
+--> provides additional features and tools for typesetting mathematical content
+--> it is considered a must-have package for serious mathematical typesetting in LaTeX
+--> builds upon the functionality provided by the amsmath package, adding even more tools for typesetting complex mathematical expressions
+
+mhchem
+--> used for typesetting chemical equations and chemical formulae
+
+newcommand
+--> is used to define custom commands or macros
+--> these commands allow you to create shortcuts for frequently used or complex sequences of LaTeX code
+--> this can save you time and make your document more readable and maintainable
+
+physics
+--> provides a set of convenient and user-friendly commands for typesetting physics equations and expressions
+--> it's designed to simplify the process of writing complex mathematical expressions commonly used in physics
+
+textcomp
+--> provides access to a wide range of additional text symbols, accents, and characters that are not available by default in the standard LaTeX fonts
+
+upgreek
+--> provides a way to typeset Greek letters in an upright (non-italic) font style
+--> this is particularly useful in contexts where you want to maintain a consistent font style, such as when using Greek letters for variables in mathematical formulas
+
+verb
+--> provides a way to typeset verbatim text, which means that the text is reproduced exactly as it appears, including spaces and special characters
+--> this is useful when you want to display code, commands, or other text that shouldn't be interpreted as LaTeX commands
+
+
+
+
+
 import docx
 
 def read_all_tables(docx_file_path):
