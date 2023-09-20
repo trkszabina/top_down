@@ -1,3 +1,46 @@
+Sub UpdateList()
+    Dim doc As Document
+    Dim cc As ContentControl
+    Dim item As String
+    
+    ' Define the list of items
+    Dim itemList As Variant
+    
+    ' Define the list of fruits and vegetables
+    Dim fruits As String
+    Dim vegetables As String
+    
+    ' Populate the lists
+    fruits = "Apple" & vbCr & "Banana" & vbCr & "Orange" & vbCr & "Grapes"
+    vegetables = "Carrot" & vbCr & "Broccoli" & vbCr & "Spinach" & vbCr & "Potato"
+    
+    ' Set itemList based on selection
+    For Each cc In ActiveDocument.ContentControls
+        If cc.Type = wdContentControlDropdownList Then
+            If cc.Title = "List" Then
+                If cc.Range.Text = "Fruits" Then
+                    itemList = Split(fruits, vbCr)
+                ElseIf cc.Range.Text = "Vegetables" Then
+                    itemList = Split(vegetables, vbCr)
+                End If
+                
+                ' Clear the existing items
+                cc.DropdownListEntries.Clear
+                ' Add the new list of items
+                For Each item In itemList
+                    cc.DropdownListEntries.Add item
+                Next item
+            End If
+        End If
+    Next cc
+End Sub
+
+
+
+
+
+
+
 Sub CreateCheckboxDropdown()
     Dim rngDV As Range
     Dim ws As Worksheet
