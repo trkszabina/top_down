@@ -1,3 +1,29 @@
+Sub CreateCheckboxDropdown()
+    Dim rngDV As Range
+    Dim ws As Worksheet
+    
+    ' Define worksheet
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Replace "Sheet1" with your sheet name
+    
+    ' Define range for second dropdown
+    Set rngDV = ws.Range("B1") ' Change to your desired cell for second dropdown
+    
+    With rngDV.Validation
+        .Delete
+        .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:= _
+             xlBetween, Formula1:="=INDIRECT($A$1)"
+        .IgnoreBlank = True
+        .InCellDropdown = True
+        .ShowInput = True
+        .ShowError = True
+    End With
+End Sub
+
+
+
+
+
+
 action
 --> used to typeset various mathematical symbols and notations associated with actions and operations in algebra, group theory, and related fields of mathematics.
 
