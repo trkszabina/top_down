@@ -1,3 +1,37 @@
+Sub CreateCheckboxList()
+    Dim i As Integer
+    Dim chkBox As Checkbox
+    Dim yPos As Single
+
+    ' Set the initial position for the checkboxes
+    yPos = 50
+    
+    ' Loop to create checkboxes
+    For i = 1 To 5
+        ' Create a checkbox
+        Set chkBox = ActiveDocument.Shapes.AddFormControl _
+            (Type:=msoControlCheckBox, Left:=50, Top:=yPos, Width:=100, Height:=15).OLEFormat.Object
+        
+        ' Set checkbox properties
+        With chkBox
+            .Name = "CheckBox" & i
+            .Caption = "Checkbox " & i
+        End With
+        
+        ' Increase the vertical position for the next checkbox
+        yPos = yPos + 25
+    Next i
+End Sub
+
+
+
+
+
+
+
+
+
+
 Sub UpdateList()
     Dim doc As Document
     Dim cc As ContentControl
