@@ -1,4 +1,34 @@
 from pptx import Presentation
+
+def extract_placeholder_info(input_pptx, output_txt):
+    # Load the PowerPoint presentation
+    presentation = Presentation(input_pptx)
+
+    # Open a text file for writing
+    with open(output_txt, 'w') as output_file:
+        # Iterate through all slides
+        for slide_number, slide in enumerate(presentation.slides):
+            output_file.write(f"Slide {slide_number + 1}:\n")
+
+            # Iterate through placeholders on the slide
+            for placeholder_number, placeholder in enumerate(slide.placeholders):
+                output_file.write(f"  Placeholder {placeholder_number + 1}: {placeholder.name}\n")
+
+            output_file.write("\n")
+
+    print(f"Placeholder information extracted and saved to {output_txt}")
+
+if __name__ == "__main__":
+    input_pptx = "path/to/your/input.pptx"  # Replace with your PowerPoint file
+    output_txt = "placeholder_info.txt"     # Replace with the desired output file name
+
+    extract_placeholder_info(input_pptx, output_txt)
+
+
+
+
+
+from pptx import Presentation
 from pptx.util import Inches
 
 def create_simple_presentation(output_path):
