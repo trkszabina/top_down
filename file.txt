@@ -1,3 +1,20 @@
+import pandas as pd
+
+def fill_blank_cells_with_null(file_path):
+    # Read the Excel file into a DataFrame
+    df = pd.read_excel(file_path)
+    # Fill blank cells with '[null]'
+    df.fillna('[null]', inplace=True)
+    # Write the modified DataFrame back to Excel
+    df.to_excel(file_path, index=False)
+
+# Example usage:
+file_path = "example.xlsx"
+fill_blank_cells_with_null(file_path)
+print("Blank cells filled with [null] in the Excel file.")
+
+
+
 def fill_blank_cells_with_null(file_path):
     # Load the Excel file
     wb = openpyxl.load_workbook(file_path)
