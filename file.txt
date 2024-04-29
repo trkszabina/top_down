@@ -1,5 +1,41 @@
 import pandas as pd
 
+def fill_blank_cells_with_null_and_remove_triangles(file_path):
+    # Read the Excel file into a dictionary of DataFrames, with sheet names as keys
+    excel_data = pd.read_excel(file_path, sheet_name=None)
+
+    # Iterate over each sheet
+    for sheet_name, df in excel_data.items():
+        # Fill blank cells with '[null]'
+        df.fillna('[null]', inplace=True)
+
+        # Perform "Text to Columns" operation on column N
+        if 'N' in df.columns:
+            df['N'] = df['N'].astype(str)  # Ensure column N is treated as text
+            # Split the text in column N into multiple columns
+            df[['N', '']] = df['N'].str.split(expand=True)
+            # Drop the empty column created by split operation
+            df.drop(columns=[''], inplace=True)
+
+        # Write the modified DataFrame back to the dictionary
+        excel_data[sheet_name] = df
+
+    # Write the modified DataFrames back to Excel
+    with pd.ExcelWriter(file_path) as writer:
+        for sheet_name, df in excel_data.items():
+            df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+# Example usage:
+file_path = "example.xlsx"
+fill_blank_cells_with_null_and_remove_triangles(file_path)
+print("Blank cells filled with [null] and green triangles removed from the Excel file.")
+
+
+
+
+
+import pandas as pd
+
 def fill_blank_cells_with_null(file_path):
     # Read the Excel file into a dictionary of DataFrames, with sheet names as keys
     excel_data = pd.read_excel(file_path, sheet_name=None)
