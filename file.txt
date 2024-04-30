@@ -18,18 +18,30 @@ def extract_numbers_and_total(pptx_file):
                             numbers.append(int(cell.text.strip()))
     return numbers, total
 
-def calculate_percentage(numbers, total):
-    percentages = [(num / total) * 100 for num in numbers]
-    return percentages
+def calculate_and_update_percentages(pptx_file):
+    numbers, total = extract_numbers_and_total(pptx_file)
+    if total is not None:
+        percentages = [(num / total) * 100 for num in numbers]
+        prs = Presentation(pptx_file)
+        slide_index = 2  # Assuming tables are on 3rd and 4th slides
+        for slide in prs.slides[slide_index:slide_index+2]:
+            for shape in slide.shapes:
+                if shape.has_table:
+                    table = shape.table
+                    last_row = table.rows[-1]
+                    last_cell = last_row.cells[-1]
+                    for i, cell in enumerate(last_row.cells[:-1]):
+                        if cell.text.strip().isdigit():
+                            cell.text = f"{cell.text.strip()} ({percentages[i]:.1f}%)"
+        prs.save(pptx_file)
+        print("Percentages updated in the presentation.")
+    else:
+        print("Total number not found.")
 
 # Example usage:
 pptx_file = "your_presentation.pptx"  # Replace this with your PowerPoint presentation file
-numbers, total = extract_numbers_and_total(pptx_file)
-if total is not None:
-    percentages = calculate_percentage(numbers, total)
-    print("Percentages:", percentages)
-else:
-    print("Total number not found.")
+calculate_and_update_percentages(pptx_file)
+
 
 
 
