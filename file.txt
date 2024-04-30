@@ -1,3 +1,40 @@
+from pptx import Presentation
+
+def extract_numbers_and_total(pptx_file):
+    prs = Presentation(pptx_file)
+    numbers = []
+    total = None
+    for slide in prs.slides[2:4]:  # Assuming tables are on 3rd and 4th slides
+        for shape in slide.shapes:
+            if shape.has_table:
+                table = shape.table
+                last_row = table.rows[-1]
+                last_cell_text = last_row.cells[-1].text.strip()
+                if last_cell_text.isdigit():
+                    total = int(last_cell_text)
+                else:
+                    for cell in last_row.cells[:-1]:
+                        if cell.text.strip().isdigit():
+                            numbers.append(int(cell.text.strip()))
+    return numbers, total
+
+def calculate_percentage(numbers, total):
+    percentages = [(num / total) * 100 for num in numbers]
+    return percentages
+
+# Example usage:
+pptx_file = "your_presentation.pptx"  # Replace this with your PowerPoint presentation file
+numbers, total = extract_numbers_and_total(pptx_file)
+if total is not None:
+    percentages = calculate_percentage(numbers, total)
+    print("Percentages:", percentages)
+else:
+    print("Total number not found.")
+
+
+
+
+
 import pandas as pd
 
 def fill_blank_cells_with_null_and_remove_triangles_and_replace(file_path):
