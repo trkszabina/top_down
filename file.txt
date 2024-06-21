@@ -1,4 +1,34 @@
 Sub CheckMasterPlaceholderID()
+    Dim design As Design
+    Dim master As Master
+    Dim layout As CustomLayout
+    Dim shape As shape
+    
+    ' Loop through all designs in the presentation
+    For Each design In ActivePresentation.Designs
+        ' Get the slide master of the current design
+        Set master = design.SlideMaster
+        
+        ' Loop through all custom layouts in the slide master
+        For Each layout In master.CustomLayouts
+            ' Loop through all shapes in the custom layout
+            For Each shape In layout.Shapes
+                ' Check if the shape is a placeholder
+                If shape.Type = msoPlaceholder Then
+                    ' Print the placeholder ID and name to the Immediate Window (Ctrl + G to view)
+                    Debug.Print "Master Layout - Placeholder ID: " & shape.Id & " - Name: " & shape.Name
+                End If
+            Next shape
+        Next layout
+    Next design
+End Sub
+
+
+
+
+
+
+Sub CheckMasterPlaceholderID()
     Dim master As slideMaster
     Dim layout As CustomLayout
     Dim shape As shape
