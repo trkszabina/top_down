@@ -1,3 +1,24 @@
+Sub CheckPlaceholderID()
+    Dim slide As slide
+    Dim shape As shape
+    
+    ' Loop through all slides in the presentation
+    For Each slide In ActivePresentation.Slides
+        ' Loop through all shapes in the slide
+        For Each shape In slide.Shapes
+            ' Check if the shape is a placeholder
+            If shape.Type = msoPlaceholder Then
+                ' Print the placeholder ID and name to the Immediate Window (Ctrl + G to view)
+                Debug.Print "Slide " & slide.SlideIndex & " - Placeholder ID: " & shape.Id & " - Name: " & shape.Name
+            End If
+        Next shape
+    Next slide
+End Sub
+
+
+
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
