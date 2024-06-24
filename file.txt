@@ -2,6 +2,25 @@ from pptx import Presentation
 
 def print_placeholder_indices(presentation_path):
     prs = Presentation(presentation_path)
+
+    # Iterate through each slide layout in the presentation
+    for layout_idx, slide_layout in enumerate(prs.slide_layouts):
+        print(f"Slide Layout {layout_idx + 1}:")
+        
+        # Iterate through each placeholder in the slide layout
+        for shape in slide_layout.placeholders:
+            print(f'  {shape.placeholder_format.idx} {shape.name}')
+
+# Path to your presentation
+presentation_path = "path/to/your/presentation.pptx"
+print_placeholder_indices(presentation_path)
+
+
+
+from pptx import Presentation
+
+def print_placeholder_indices(presentation_path):
+    prs = Presentation(presentation_path)
     
     # Iterate through each slide master
     for master_idx, slide_master in enumerate(prs.slide_master.slide_master_placeholders):
