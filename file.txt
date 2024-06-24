@@ -1,3 +1,32 @@
+from pptx import Presentation
+
+def print_placeholder_indices(presentation_path):
+    prs = Presentation(presentation_path)
+    
+    # Iterate through each slide master
+    for master_idx, slide_master in enumerate(prs.slide_master.slide_master_placeholders):
+        print(f"Slide Master {master_idx + 1}:")
+        
+        # Iterate through each layout in the slide master
+        for layout_idx, layout in enumerate(slide_master.slide_layouts):
+            print(f"  Layout {layout_idx + 1}:")
+            
+            # Iterate through each placeholder in the layout
+            for placeholder in layout.placeholders:
+                try:
+                    name = placeholder.name
+                except AttributeError:
+                    name = 'Unnamed Placeholder'
+                
+                print(f"    Placeholder: '{name}', Index: {placeholder.placeholder_format.idx}")
+
+# Path to your presentation
+presentation_path = "path/to/your/presentation.pptx"
+print_placeholder_indices(presentation_path)
+
+
+
+
 Sub ListPlaceholderIndices()
     Dim design As Design
     Dim master As Master
