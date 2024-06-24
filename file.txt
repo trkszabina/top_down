@@ -1,3 +1,29 @@
+Sub ListPlaceholderIndices()
+    Dim design As Design
+    Dim master As Master
+    Dim layout As CustomLayout
+    Dim placeholder As shape
+    Dim i As Integer
+    
+    ' Loop through all designs in the presentation
+    For Each design In ActivePresentation.Designs
+        ' Get the slide master of the current design
+        Set master = design.SlideMaster
+        
+        ' Loop through all custom layouts in the slide master
+        For Each layout In master.CustomLayouts
+            ' Loop through all placeholders in the custom layout
+            For i = 1 To layout.Shapes.Placeholders.Count
+                Set placeholder = layout.Shapes.Placeholders(i)
+                ' Print the layout name, placeholder index, and name to the Immediate Window (Ctrl + G to view)
+                Debug.Print "Custom Layout: " & layout.Name & " - Placeholder Index: " & i & " - Name: " & placeholder.Name
+            Next i
+        Next layout
+    Next design
+End Sub
+
+
+
 Sub CheckMasterPlaceholderIndex()
     Dim design As Design
     Dim master As Master
